@@ -162,8 +162,8 @@ TextureImporter:
       name: env_objects_2
       rect:
         serializedVersion: 2
-        x: 111
-        y: 129
+        x: 112
+        y: 128
         width: 96
         height: 64
       alignment: 0
@@ -314,7 +314,7 @@ TextureImporter:
         width: 22
         height: 134
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -322,6 +322,27 @@ TextureImporter:
       bones: []
       spriteID: 53d97509c3fda58478b20c96f2a6f678
       internalID: 1554534137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: env_objects_10
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 128
+        width: 96
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b35b1926e0ec8e242a57d3d70b5a7cc5
+      internalID: -1904580829
       vertices: []
       indices: 
       edges: []
@@ -337,6 +358,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      env_objects_10: -1904580829
       env_objects_9: 1554534137
       env_objects_5: 972668738
       env_objects_8: -33164679
