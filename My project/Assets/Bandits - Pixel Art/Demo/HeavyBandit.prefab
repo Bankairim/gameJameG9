@@ -81,7 +81,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4588935210562790}
   - component: {fileID: 114999745408315450}
-  - component: {fileID: 708241595344998476}
   - component: {fileID: 95734438044755836}
   - component: {fileID: 212652212501150786}
   - component: {fileID: 50959880312528810}
@@ -124,28 +123,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba8b435a8dc3f604e9a13c4acd7081c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_jumpForce: 7.5
-  detectionRadius: 5
-  attackBanditDistance: 2.5
-  banditDetectionDistance: 10
-  banditManager: {fileID: 708241595344998476}
-  banditAttack: 1
-  agent: {fileID: 2422921284380955212}
-  initialPosition: {x: 0, y: 0, z: 0}
---- !u!114 &708241595344998476
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1463392086428580}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a4d42888e2454b4c8b244c4e26c9ffc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animator: {fileID: 0}
-  Enemylives: 1
+  m_speed: 2
+  vitessePoursuite: 1
+  distanceDetection: 8
+  distanceAttaque: 5
 --- !u!95 &95734438044755836
 Animator:
   serializedVersion: 5

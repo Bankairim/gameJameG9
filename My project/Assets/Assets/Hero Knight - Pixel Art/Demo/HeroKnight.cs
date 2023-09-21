@@ -16,8 +16,7 @@ public class HeroKnight : MonoBehaviour {
 
     private Animator            m_animator;
     private Rigidbody2D         m_body2d;
-    private BoxCollider2D       m_collider;
-    private CapsuleCollider2D       m_swordCollider = null;
+    private CapsuleCollider2D   m_swordCollider = null;
     private Sensor_HeroKnight   m_groundSensor;
     private Sensor_HeroKnight   m_wallSensorR1;
     private Sensor_HeroKnight   m_wallSensorR2;
@@ -38,6 +37,7 @@ public class HeroKnight : MonoBehaviour {
     private float               m_blockTime = 0.5f;
     private float               m_delayToIdle = 0.0f;
     private float               m_rollDuration = 8.0f / 14.0f;
+    private float               m_timeToShake = 0f;
     private float               m_rollCurrentTime;
 
     // SINGLETON
@@ -52,7 +52,6 @@ public class HeroKnight : MonoBehaviour {
         Instance = this;
         m_animator = GetComponent<Animator>();
         m_body2d = GetComponent<Rigidbody2D>();
-        m_collider = GetComponent<BoxCollider2D>();
         m_groundSensor = transform.Find("GroundSensor").GetComponent<Sensor_HeroKnight>();
         m_wallSensorR1 = transform.Find("WallSensor_R1").GetComponent<Sensor_HeroKnight>();
         m_wallSensorR2 = transform.Find("WallSensor_R2").GetComponent<Sensor_HeroKnight>();
@@ -133,6 +132,7 @@ public class HeroKnight : MonoBehaviour {
                 new Vector2(0.71f, 0.95f) : new Vector2(-0.71f, 0.95f);
             m_swordCollider.size = new Vector2(1.55f, 1.7f);
             m_swordCollider.isTrigger = true;
+            m_swordCollider.tag = "Sword";
 
             m_attacking = true;
             m_currentAttack++;
@@ -242,6 +242,17 @@ public class HeroKnight : MonoBehaviour {
         {
             m_doubleJump = true;
         }
+        if (m_timeToShake >= 0.0f)
+        {
+            var circlePos = new Vector3(-0.41f, 0.25f, -10f) + Random.insideUnitSphere * 0.1f;
+            Camera.main.transform.position = new Vector3(circlePos.x, circlePos.y, -10);
+            m_timeToShake -= Time.deltaTime;
+
+            if (m_timeToShake <= 0.0f)
+            {
+                Camera.main.transform.position = new Vector3(-0.41f, 0.25f, -10f);
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -279,21 +290,19 @@ public class HeroKnight : MonoBehaviour {
         {
             if ((m_attacking || m_blocking) && transform.forward.x >= 0 && m_facingDirection == -1)
             {
+                var vfxPos = new Vector3(
+                    (transform.position.x + 0.85f * m_facingDirection),
+                    transform.position.y + 0.8f,
+                    transform.position.z
+                );
+                VFXManager.Instance.Create("Blocked", vfxPos);
                 Destroy(collision.gameObject);
                 return;
             }
 
-            m_health -= 10;
-            m_healthbar.GetComponent<Slider>().value = m_health;
+            TakeDamage(10);
+
             Destroy(collision.gameObject);
-
-            m_animator.SetTrigger("Hurt");
-
-            if (m_health <= 0)
-            {
-                m_isAlive = false;
-                m_animator.SetTrigger("Death");
-            }
         }
     }
 
@@ -310,6 +319,20 @@ public class HeroKnight : MonoBehaviour {
         if (collision.collider.CompareTag("GlitchedSword"))
         {
             m_glitching = false;
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        m_timeToShake = 0.5f;
+        m_health -= damage;
+        m_healthbar.GetComponent<Slider>().value = m_health;
+        m_animator.SetTrigger("Hurt");
+
+        if (m_health <= 0)
+        {
+            m_isAlive = false;
+            m_animator.SetTrigger("Death");
         }
     }
 }
