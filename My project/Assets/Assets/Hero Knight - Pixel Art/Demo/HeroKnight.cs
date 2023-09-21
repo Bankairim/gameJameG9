@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEditor.SceneManagement;
 
 public class HeroKnight : MonoBehaviour {
 
@@ -8,6 +9,7 @@ public class HeroKnight : MonoBehaviour {
     [SerializeField] float m_jumpForce = 7.5f;
     [SerializeField] float m_rollForce = 6.0f;
     [SerializeField] float m_health = 100;
+    [SerializeField] float m_blockCooldown = 1.5f;
     [SerializeField] GameObject m_slideDust;
     [SerializeField] GameObject m_healthbar;
     [SerializeField] BoxCollider2D m_wallCollider;
@@ -15,7 +17,7 @@ public class HeroKnight : MonoBehaviour {
     private Animator            m_animator;
     private Rigidbody2D         m_body2d;
     private BoxCollider2D       m_collider;
-    private BoxCollider2D       m_swordCollider = null;
+    private CapsuleCollider2D       m_swordCollider = null;
     private Sensor_HeroKnight   m_groundSensor;
     private Sensor_HeroKnight   m_wallSensorR1;
     private Sensor_HeroKnight   m_wallSensorR2;
@@ -32,14 +34,22 @@ public class HeroKnight : MonoBehaviour {
     private int                 m_facingDirection = 1;
     private int                 m_currentAttack = 0;
     private float               m_timeSinceAttack = 0.0f;
+    private float               m_timeSinceBlock = -1f;
+    private float               m_blockTime = 0.5f;
     private float               m_delayToIdle = 0.0f;
     private float               m_rollDuration = 8.0f / 14.0f;
     private float               m_rollCurrentTime;
 
+    // SINGLETON
+    public static HeroKnight Instance;
+
+    public bool Attacking { get => m_attacking; }
+    public bool Blocking { get => m_blocking; }
 
     // Use this for initialization
     void Start ()
     {
+        Instance = this;
         m_animator = GetComponent<Animator>();
         m_body2d = GetComponent<Rigidbody2D>();
         m_collider = GetComponent<BoxCollider2D>();
@@ -97,8 +107,9 @@ public class HeroKnight : MonoBehaviour {
         }
 
         // Move
-        if (!m_rolling )
+        if (!m_rolling && (m_timeSinceBlock <= -0.1f || m_timeSinceBlock >= m_blockTime)) {
             m_body2d.velocity = new Vector2(inputX * m_speed, m_body2d.velocity.y);
+        }
 
         //Set AirSpeed in animator
         m_animator.SetFloat("AirSpeedY", m_body2d.velocity.y);
@@ -111,6 +122,18 @@ public class HeroKnight : MonoBehaviour {
         //Attack
         if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f && !m_rolling)
         {
+            if (m_swordCollider != null)
+            {
+                Destroy(m_swordCollider);
+                m_swordCollider = null;
+            }
+
+            m_swordCollider = gameObject.AddComponent<CapsuleCollider2D>();
+            m_swordCollider.offset = m_facingDirection == 1 ?
+                new Vector2(0.71f, 0.95f) : new Vector2(-0.71f, 0.95f);
+            m_swordCollider.size = new Vector2(1.55f, 1.7f);
+            m_swordCollider.isTrigger = true;
+
             m_attacking = true;
             m_currentAttack++;
 
@@ -130,20 +153,12 @@ public class HeroKnight : MonoBehaviour {
         }
 
         // Block
-        else if (Input.GetMouseButtonDown(1))
+        else if (Input.GetMouseButtonDown(1) && (m_timeSinceBlock <= -0.1f || m_timeSinceBlock >= m_blockCooldown))
         {
             m_blocking = true;
-
-            if (!m_rolling)
-            {
-                m_animator.SetTrigger("Block");
-                m_animator.SetBool("IdleBlock", true);
-            }
-
-            else
-            {
-                m_animator.SetBool("IdleBlock", false);
-            }
+            m_timeSinceBlock = 0.0001f;
+            m_animator.SetTrigger("Block");
+            m_body2d.velocity = new Vector2(0f, m_body2d.velocity.y);
         }
 
         // Roll
@@ -195,10 +210,15 @@ public class HeroKnight : MonoBehaviour {
         {
             m_blocking = false;
         }
-        if (Input.GetMouseButtonDown(0) && m_timeSinceAttack >= 1.0f)
+        if (m_timeSinceAttack >= 0.5f)
         {
             m_attacking = false;
-            m_swordCollider = null;
+
+            if (m_swordCollider != null)
+            {
+                Destroy(m_swordCollider);
+                m_swordCollider = null;
+            }
         }
 
         if (m_wallCollider.enabled && m_glitching)
@@ -208,6 +228,11 @@ public class HeroKnight : MonoBehaviour {
         else if (!m_glitching)
         {
             m_wallCollider.enabled = true;
+        }
+
+        if (m_timeSinceBlock >= 0.0f)
+        {
+            m_timeSinceBlock += Time.deltaTime;
         }
     }
 
@@ -252,13 +277,13 @@ public class HeroKnight : MonoBehaviour {
     {
         if (collision.CompareTag("Ennemy") && m_isAlive)
         {
-            if (m_blocking && transform.forward.x >= 0 && m_facingDirection == -1)
+            if ((m_attacking || m_blocking) && transform.forward.x >= 0 && m_facingDirection == -1)
             {
                 Destroy(collision.gameObject);
                 return;
             }
 
-            m_health -= 20;
+            m_health -= 10;
             m_healthbar.GetComponent<Slider>().value = m_health;
             Destroy(collision.gameObject);
 
