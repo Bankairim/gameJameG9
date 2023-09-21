@@ -40,11 +40,6 @@ public class Bandit : MonoBehaviour {
         player = GameObject.Find("HeroKnight").transform;
         // joueur = GameObject.FindGameObjectWithTag("Player")[0].transform; // Assurez-vous que le tag "Player" est défini pour le joueur dans Unity
     }
-
-    // private void OnDrawGizmosSelected(){
-    //     Gizmos.color = Color.red;
-    //     Gizmos.DrawWireSphere(transform.position, banditDetectionDistance);
-    // }
     
     // Update is called once per frame
     void Update () {
@@ -59,48 +54,6 @@ public class Bandit : MonoBehaviour {
         } else {
             m_animator.SetBool("running", false);
         }
-
-        // if (banditManager.Enemylives > 0)
-        // {
-        //     float distanceBetweenPlayerBandit = Vector3.Distance(transform.position, player.position);
-        
-        //     if((distanceBetweenPlayerBandit < banditDetectionDistance) &&
-        //         distanceBetweenPlayerBandit > attackBanditDistance)
-        //     {
-        //         agent.destination = player.position;
-        //     }
-        //     if((distanceBetweenPlayerBandit <= attackBanditDistance) && banditAttack) 
-        //     {
-        //         banditAttack = false;
-        //         GetComponent<Animator>().SetTrigger("attack");
-        //         StartCoroutine("AttackCoroutine");
-        //     }
-
-        //     if (distanceBetweenPlayerBandit > banditDetectionDistance) {
-        //         agent.destination = initialPosition;
-        //     }
-        //     Vector2 currentPosition = transform.position;
-
-        //     // Utilisez MoveTowards pour obtenir la nouvelle position
-        //     Vector2 newPosition = Vector2.MoveTowards(currentPosition, player.position, speed * Time.deltaTime);
-
-        //     // Appliquez la nouvelle position à l'ennemi
-        //     transform.position = newPosition;
-        //     Debug.Log(newPosition);
-        // }
-        
-
-        // //Vérifier si le personnage vient de toucher le sol
-        // if (!m_grounded && m_groundSensor.State()) {
-        //     m_grounded = true;
-        //     m_animator.SetBool("Grounded", m_grounded);
-        // }
-
-        // // // // Vérifier si le personnage vient de commencer à tomber
-        // if(m_grounded && !m_groundSensor.State()) {
-        //     m_grounded = false;
-        //     m_animator.SetBool("Grounded", m_grounded);
-        // }
 
         if (banditManager.Enemylives > 0)
         {
@@ -142,68 +95,6 @@ public class Bandit : MonoBehaviour {
                 transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
             }
         }
-       
-
-
-        // // -- Gérer l'entrée et le mouvement --
-        // float inputX = Input.GetAxis("Horizontal");
-
-        // // // Changer la direction du sprite en fonction de la direction de la marche
-        // if (inputX > 0)
-        //     transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
-        // else if (inputX < 0)
-        //     transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-
-        // // Déplacer
-        // m_body2d.velocity = new Vector2(2 * m_speed, m_body2d.velocity.y);
-
-        // // Définir AirSpeed dans l'animator
-        // m_animator.SetFloat("AirSpeed", m_body2d.velocity.y);
-
-        // // -- Gérer les animations --
-        // // Mort
-        // if (Input.GetKeyDown("e")) {
-        //     if (!m_isDead)
-        //         m_animator.SetTrigger("Death");
-        //     else
-        //         m_animator.SetTrigger("Recover");
-
-        //     m_isDead = !m_isDead;
-        // }
-            
-        // // Blessure
-        // else if (Input.GetKeyDown("q"))
-        //     m_animator.SetTrigger("Hurt");
-
-        // // Attaque
-        // else if (Input.GetMouseButtonDown(0)) {
-        //     m_animator.SetTrigger("Attack");
-        // }
-
-        // // Changer entre l'attente et l'attente de combat
-        // else if (Input.GetKeyDown("f"))
-        //     m_combatIdle = !m_combatIdle;
-
-        // Sauter
-        // else if (Input.GetKeyDown("space") && m_grounded) {
-        //     m_animator.SetTrigger("Jump");
-        //     m_grounded = false;
-        //     m_animator.SetBool("Grounded", m_grounded);
-        //     m_body2d.velocity = new Vector2(m_body2d.velocity.x, m_jumpForce);
-        //     m_groundSensor.Disable(0.2f);
-        // }
-
-        // Courir
-        // else if (Mathf.Abs(inputX) > Mathf.Epsilon)
-        //     m_animator.SetInteger("AnimState", 2);
-
-        // // Attente de combat
-        // else if (m_combatIdle)
-        //     m_animator.SetInteger("AnimState", 1);
-
-        // // Attente
-        // else
-        //     m_animator.SetInteger("AnimState", 0);
     }
 
     public void OnTriggerEnter(Collider other)

@@ -4,14 +4,16 @@ using UnityEngine.UI;
 
 public class HeroKnight : MonoBehaviour {
 
-    [SerializeField] float      m_speed = 4.0f;
-    [SerializeField] float      m_jumpForce = 7.5f;
-    [SerializeField] float      m_rollForce = 6.0f;
+    [SerializeField] float m_speed = 4.0f;
+    [SerializeField] float m_jumpForce = 7.5f;
+    [SerializeField] float m_rollForce = 6.0f;
     [SerializeField] GameObject m_slideDust;
     [SerializeField] GameObject m_healthbar;
+    [SerializeField] BoxCollider2D m_wallCollider;
 
     private Animator            m_animator;
     private Rigidbody2D         m_body2d;
+    private BoxCollider2D       m_collider;
     private BoxCollider2D       m_swordCollider = null;
     private Sensor_HeroKnight   m_groundSensor;
     private Sensor_HeroKnight   m_wallSensorR1;
@@ -40,6 +42,7 @@ public class HeroKnight : MonoBehaviour {
     {
         m_animator = GetComponent<Animator>();
         m_body2d = GetComponent<Rigidbody2D>();
+        m_collider = GetComponent<BoxCollider2D>();
         m_groundSensor = transform.Find("GroundSensor").GetComponent<Sensor_HeroKnight>();
         m_wallSensorR1 = transform.Find("WallSensor_R1").GetComponent<Sensor_HeroKnight>();
         m_wallSensorR2 = transform.Find("WallSensor_R2").GetComponent<Sensor_HeroKnight>();
@@ -198,6 +201,14 @@ public class HeroKnight : MonoBehaviour {
             m_swordCollider = null;
         }
 
+        if (m_wallCollider.enabled && m_glitching)
+        {
+            m_wallCollider.enabled = false;
+        }
+        else if (!m_glitching)
+        {
+            m_wallCollider.enabled = true;
+        }
     }
 
     private void LateUpdate()
