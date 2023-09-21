@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class HeroKnight : MonoBehaviour {
 
@@ -8,6 +9,7 @@ public class HeroKnight : MonoBehaviour {
     [SerializeField] float      m_rollForce = 6.0f;
     [SerializeField] bool       m_noBlood = false;
     [SerializeField] GameObject m_slideDust;
+    [SerializeField] GameObject m_healthbar;
 
     private Animator            m_animator;
     private Rigidbody2D         m_body2d;
@@ -20,12 +22,15 @@ public class HeroKnight : MonoBehaviour {
     private bool                m_grounded = false;
     private bool                m_rolling = false;
     private bool                m_doubleJump = true;
+    private bool                m_isAlive = true;
+    private bool                m_glitching = false;
     private int                 m_facingDirection = 1;
     private int                 m_currentAttack = 0;
     private float               m_timeSinceAttack = 0.0f;
     private float               m_delayToIdle = 0.0f;
     private float               m_rollDuration = 8.0f / 14.0f;
     private float               m_rollCurrentTime;
+    private float               m_health = 100;
 
 
     // Use this for initialization
@@ -43,6 +48,8 @@ public class HeroKnight : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
+        if (!m_isAlive) return;
+
         // Increase timer that controls attack combo
         m_timeSinceAttack += Time.deltaTime;
 
@@ -102,10 +109,6 @@ public class HeroKnight : MonoBehaviour {
             m_animator.SetBool("noBlood", m_noBlood);
             m_animator.SetTrigger("Death");
         }
-            
-        //Hurt
-        else if (Input.GetKeyDown("q") && !m_rolling)
-            m_animator.SetTrigger("Hurt");
 
         //Attack
         else if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f && !m_rolling)
@@ -192,6 +195,15 @@ public class HeroKnight : MonoBehaviour {
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (m_glitching)
+        {
+            Debug.Log("GLITCHING");
+            m_body2d.velocity = new Vector2(m_body2d.velocity.x + ArrowManager.GLITCH_SPEED, m_body2d.velocity.y);
+        }
+    }
+
     // Animation Events
     // Called in slide animation.
     void AE_SlideDust()
@@ -209,6 +221,40 @@ public class HeroKnight : MonoBehaviour {
             GameObject dust = Instantiate(m_slideDust, spawnPosition, gameObject.transform.localRotation) as GameObject;
             // Turn arrow in correct direction
             dust.transform.localScale = new Vector3(m_facingDirection, 1, 1);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Ennemy") && m_isAlive)
+        {
+            m_health -= 20;
+            m_healthbar.GetComponent<Slider>().value = m_health;
+            Destroy(collision.gameObject);
+
+            m_animator.SetTrigger("Hurt");
+
+            if (m_health <= 0)
+            {
+                m_isAlive = false;
+                m_animator.SetTrigger("Death");
+            }
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("GlitchedSword"))
+        {
+            m_glitching = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("GlitchedSword"))
+        {
+            m_glitching = false;
         }
     }
 }
