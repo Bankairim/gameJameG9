@@ -7,6 +7,7 @@ public class HeroKnight : MonoBehaviour {
     [SerializeField] float m_speed = 4.0f;
     [SerializeField] float m_jumpForce = 7.5f;
     [SerializeField] float m_rollForce = 6.0f;
+    [SerializeField] float m_health = 100;
     [SerializeField] GameObject m_slideDust;
     [SerializeField] GameObject m_healthbar;
     [SerializeField] BoxCollider2D m_wallCollider;
@@ -34,7 +35,6 @@ public class HeroKnight : MonoBehaviour {
     private float               m_delayToIdle = 0.0f;
     private float               m_rollDuration = 8.0f / 14.0f;
     private float               m_rollCurrentTime;
-    private float               m_health = 100;
 
 
     // Use this for initialization

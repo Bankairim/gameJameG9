@@ -32,6 +32,7 @@ public class ArrowManager : MonoBehaviour
         }
 
         if (timer % coolDown == 0) {
+            var arrowsPos = new Vector2(Random.Range(-15f, -5f), Random.Range(-2.25f, 2.25f));
             // Special glitched sword
             if (level >= 3 && Random.value < 0.25 && sword == null)
             {
@@ -57,8 +58,8 @@ public class ArrowManager : MonoBehaviour
             for (int i = 0; i < arrowToSpawnCount / 2; i++)
             {
                 var randomPos = spawn.transform.position;
-                randomPos.y = Random.Range(-2.25f, 2.25f);
-                randomPos.x = Random.Range(-15f, -5f);
+                randomPos.y = arrowsPos.y + Random.Range(-0.5f, 0.5f);
+                randomPos.x = arrowsPos.x + Random.Range(-0.5f, 0.5f);
 
                 var newArrow = Instantiate(arrowPrefab, randomPos, Quaternion.identity);
                 newArrow.tag = "Ennemy";

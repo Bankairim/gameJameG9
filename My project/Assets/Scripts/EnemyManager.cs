@@ -9,7 +9,7 @@ public class EnemyManager : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.name == "Sword")
+        if (other.CompareTag("Sword"))
         {
             Enemylives--;
             animator.SetTrigger("hitted");
