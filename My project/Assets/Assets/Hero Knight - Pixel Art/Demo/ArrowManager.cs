@@ -31,9 +31,15 @@ public class ArrowManager : MonoBehaviour
                 randomPos.x = Random.Range(-15f, -5f);
 
                 var newArrow = Instantiate(arrowPrefab, randomPos, Quaternion.identity);
+                newArrow.tag = "Ennemy";
                 var scale = new Vector3(1, 1, 1) * Random.Range(0.5f, 1f);
 
                 newArrow.transform.localScale = scale;
+
+                var collider = newArrow.AddComponent<BoxCollider2D>();
+                collider.offset = new Vector2(0f, 0f);
+                collider.size = new Vector2(1f, 0.15f);
+                collider.isTrigger = true;
 
                 arrows.Add(newArrow);
             }
@@ -41,16 +47,22 @@ public class ArrowManager : MonoBehaviour
             for (int i = 0; i < rockToSpawnCount; i++)
             {
                 var randomPos = spawn.transform.position;
-                randomPos.y = Random.Range(0f, 5f);
-                randomPos.x = Random.Range(-6f, -4.5f);
+                randomPos.y = 2.25f;
+                randomPos.x = Random.Range(-16f, -7f);
 
                 var newRock = Instantiate(rockPrefab, randomPos, Quaternion.identity);
+                newRock.tag = "Ennemy";
                 var scale = new Vector3(1, 1, 1) * Random.Range(0.4f, 0.8f);
                 newRock.transform.localScale = scale;
 
-                var rb = newRock.AddComponent<Rigidbody>();
+                var rb = newRock.AddComponent<Rigidbody2D>();
                 rb.mass = scale.x / 100;
-                rb.velocity = new Vector3(speed/2, 0, 0);
+                rb.velocity = new Vector3(speed, speed, 0);
+
+                var collider = newRock.AddComponent<CircleCollider2D>();
+                collider.offset = new Vector2(0.07f, 0f);
+                collider.radius = 0.45f;
+                collider.isTrigger = true;    
 
                 rocks.Add(newRock);
             }
