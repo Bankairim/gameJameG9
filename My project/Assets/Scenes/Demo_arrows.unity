@@ -1281,7 +1281,7 @@ MonoBehaviour:
   spawn: {fileID: 428990561}
   coolDown: 1500
   speed: 6
-  level: 2
+  level: 4
 --- !u!1001 &6855557595897071052
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1343,7 +1343,7 @@ PrefabInstance:
       objectReference: {fileID: 89909464}
     - target: {fileID: 9043920546160527475, guid: a4b4a6d32bcb19248a754d6602ffc7e4, type: 3}
       propertyPath: m_jumpForce
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 9043920546160527475, guid: a4b4a6d32bcb19248a754d6602ffc7e4, type: 3}
       propertyPath: m_rollForce
