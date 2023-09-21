@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyManager : MonoBehaviour
 {
     [SerializeField] private Animator animator;
-    public int Enemylives = 1;
+    public int Enemylives = 3;
 
     private void OnTriggerEnter(Collider other)
     {

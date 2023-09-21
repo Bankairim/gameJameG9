@@ -44,8 +44,6 @@ public class Bandit : MonoBehaviour {
     // Update is called once per frame
     void Update () {
 
-        Debug.Log(banditAttack);
-
         if (m_body2d.velocity.x >= 0){
             if (!m_animator.GetBool("running")) {
                 m_animator.SetBool("running", true);
@@ -83,13 +81,11 @@ public class Bandit : MonoBehaviour {
 
             if (distanceGame > 0)
             {
-                Debug.Log("gauche");
                 // m_body2d.velocity = new Vector2(2, m_body2d.velocity.y);
                 transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
             }
             else if (distanceGame < 0)
             {
-                Debug.Log("droite");
                 // m_body2d.velocity = new Vector2(1, m_body2d.velocity.y);
                 // Le joueur est à gauche de l'ennemi, donc l'ennemi regarde vers la gauche
                 transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
@@ -101,7 +97,14 @@ public class Bandit : MonoBehaviour {
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("touché");
+            if (HeroKnight.Instance.Blocking)
+            {
+                return;
+            }
+            if (HeroKnight.Instance.Attacking)
+            {
+
+            }
         }
     }
 
