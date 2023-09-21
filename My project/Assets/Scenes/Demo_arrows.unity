@@ -1280,8 +1280,8 @@ MonoBehaviour:
   wall: {fileID: 1674711259}
   spawn: {fileID: 428990561}
   coolDown: 1500
-  speed: 7
-  level: 0
+  speed: 6
+  level: 2
 --- !u!1001 &6855557595897071052
 PrefabInstance:
   m_ObjectHideFlags: 0
