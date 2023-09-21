@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 public class ArrowManager : MonoBehaviour
 {
-    public static float GLITCH_SPEED = 2.0f;
+    public static float GLITCH_SPEED = 2.5f;
 
     [SerializeField] GameObject arrowPrefab;
     [SerializeField] GameObject rockPrefab;
@@ -15,27 +15,40 @@ public class ArrowManager : MonoBehaviour
     [SerializeField] GameObject toGlitch;
     [SerializeField] GameObject wall;
     [SerializeField] GameObject spawn;
-    [SerializeField] float coolDown;
-    [SerializeField] float speed = 0.1f;
-    [SerializeField] int level = 1;
+    [SerializeField] float      coolDown;
+    [SerializeField] float      timeToIncrement = 15000;
+    [SerializeField] float      speed = 0.1f;
+    [SerializeField] int        level = 1;
 
-    private float timer = 0;
-    private List<GameObject> arrows = new List<GameObject>();
-    private List<GameObject> rocks = new List<GameObject>();
-    private GameObject sword = null;
+    private float               timer = 0;
+    private List<GameObject>    arrows = new List<GameObject>();
+    private List<GameObject>    rocks = new List<GameObject>();
+    private GameObject          sword = null;
 
     void FixedUpdate() {
+        if (sword != null && sword.IsDestroyed() == true)
+        {
+            sword = null;
+        }
+
         if (timer % coolDown == 0) {
             // Special glitched sword
-            if (Random.value < 0.25 && sword == null)
+            if (level >= 4 && Random.value < 0.25 && sword == null)
             {
                 var swordPos = swordPrefab.transform.position;
                 swordPos.x = -10f;
                 sword = Instantiate(swordPrefab, swordPos, Quaternion.identity);
-                sword.tag = "GlitchedSword";
                 var swordCollider = sword.AddComponent<BoxCollider2D>();
+                swordCollider.tag = "GlitchedSword";
                 swordCollider.isTrigger = false;
                 swordCollider.size = new Vector2(1f, 0.2f);
+
+                //TODO: Adding a damage collider to the glitched sword unglitches it.
+                //var swordHitCollider = sword.AddComponent<CircleCollider2D>();
+                //swordHitCollider.isTrigger = true;
+                //swordHitCollider.offset = new Vector2(0.55f, -0.05f);
+                //swordHitCollider.radius = 0.045f;
+                //swordHitCollider.tag = "Ennemy";
             }
 
             var arrowToSpawnCount = Random.value * level;
@@ -85,12 +98,18 @@ public class ArrowManager : MonoBehaviour
             }
         }
         timer += Time.deltaTime * 1000;
+
+        if (timer != 0 && timer % timeToIncrement == 0)
+        {
+            level += 1;
+            speed += 1;
+        }
     }
 
     private void LateUpdate()
     {
         arrows = arrows.Where(a => !a.IsDestroyed()).ToList();
-        rocks = rocks.Where(r=> !r.IsDestroyed()).ToList();
+        rocks = rocks.Where(r => !r.IsDestroyed()).ToList();
 
         foreach (GameObject a in arrows)
         {

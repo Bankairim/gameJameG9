@@ -7,17 +7,19 @@ public class HeroKnight : MonoBehaviour {
     [SerializeField] float      m_speed = 4.0f;
     [SerializeField] float      m_jumpForce = 7.5f;
     [SerializeField] float      m_rollForce = 6.0f;
-    [SerializeField] bool       m_noBlood = false;
     [SerializeField] GameObject m_slideDust;
     [SerializeField] GameObject m_healthbar;
 
     private Animator            m_animator;
     private Rigidbody2D         m_body2d;
+    private BoxCollider2D       m_swordCollider = null;
     private Sensor_HeroKnight   m_groundSensor;
     private Sensor_HeroKnight   m_wallSensorR1;
     private Sensor_HeroKnight   m_wallSensorR2;
     private Sensor_HeroKnight   m_wallSensorL1;
     private Sensor_HeroKnight   m_wallSensorL2;
+    private bool                m_attacking = false;
+    private bool                m_blocking = false;
     private bool                m_isWallSliding = false;
     private bool                m_grounded = false;
     private bool                m_rolling = false;
@@ -103,16 +105,10 @@ public class HeroKnight : MonoBehaviour {
         m_isWallSliding = (m_wallSensorR1.State() && m_wallSensorR2.State()) || (m_wallSensorL1.State() && m_wallSensorL2.State());
         m_animator.SetBool("WallSlide", m_isWallSliding);
 
-        //Death
-        if (Input.GetKeyDown("e") && !m_rolling)
-        {
-            m_animator.SetBool("noBlood", m_noBlood);
-            m_animator.SetTrigger("Death");
-        }
-
         //Attack
-        else if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f && !m_rolling)
+        if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f && !m_rolling)
         {
+            m_attacking = true;
             m_currentAttack++;
 
             // Loop back to one after third attack
@@ -131,14 +127,21 @@ public class HeroKnight : MonoBehaviour {
         }
 
         // Block
-        else if (Input.GetMouseButtonDown(1) && !m_rolling)
+        else if (Input.GetMouseButtonDown(1))
         {
-            m_animator.SetTrigger("Block");
-            m_animator.SetBool("IdleBlock", true);
-        }
+            m_blocking = true;
 
-        else if (Input.GetMouseButtonUp(1))
-            m_animator.SetBool("IdleBlock", false);
+            if (!m_rolling)
+            {
+                m_animator.SetTrigger("Block");
+                m_animator.SetBool("IdleBlock", true);
+            }
+
+            else
+            {
+                m_animator.SetBool("IdleBlock", false);
+            }
+        }
 
         // Roll
         else if (Input.GetKeyDown("left shift") && !m_rolling && !m_isWallSliding)
@@ -147,7 +150,6 @@ public class HeroKnight : MonoBehaviour {
             m_animator.SetTrigger("Roll");
             m_body2d.velocity = new Vector2(m_facingDirection * m_rollForce, m_body2d.velocity.y);
         }
-            
 
         //Jump
         else if (Input.GetKeyDown("space") && !m_rolling)
@@ -185,6 +187,17 @@ public class HeroKnight : MonoBehaviour {
                 if(m_delayToIdle < 0)
                     m_animator.SetInteger("AnimState", 0);
         }
+
+        if (Input.GetMouseButtonUp(1))
+        {
+            m_blocking = false;
+        }
+        if (Input.GetMouseButtonDown(0) && m_timeSinceAttack >= 1.0f)
+        {
+            m_attacking = false;
+            m_swordCollider = null;
+        }
+
     }
 
     private void LateUpdate()
@@ -228,6 +241,12 @@ public class HeroKnight : MonoBehaviour {
     {
         if (collision.CompareTag("Ennemy") && m_isAlive)
         {
+            if (m_blocking && transform.forward.x >= 0 && m_facingDirection == -1)
+            {
+                Destroy(collision.gameObject);
+                return;
+            }
+
             m_health -= 20;
             m_healthbar.GetComponent<Slider>().value = m_health;
             Destroy(collision.gameObject);
