@@ -19,6 +19,7 @@ public class HeroKnight : MonoBehaviour {
     private bool                m_isWallSliding = false;
     private bool                m_grounded = false;
     private bool                m_rolling = false;
+    private bool                m_doubleJump = true;
     private int                 m_facingDirection = 1;
     private int                 m_currentAttack = 0;
     private float               m_timeSinceAttack = 0.0f;
@@ -69,7 +70,7 @@ public class HeroKnight : MonoBehaviour {
 
         // -- Handle input and movement --
         float inputX = Input.GetAxis("Horizontal");
-
+        
         // Swap direction of sprite depending on walk direction
         if (inputX > 0)
         {
@@ -146,13 +147,23 @@ public class HeroKnight : MonoBehaviour {
             
 
         //Jump
-        else if (Input.GetKeyDown("space") && m_grounded && !m_rolling)
+        else if (Input.GetKeyDown("space") && !m_rolling)
         {
-            m_animator.SetTrigger("Jump");
-            m_grounded = false;
-            m_animator.SetBool("Grounded", m_grounded);
-            m_body2d.velocity = new Vector2(m_body2d.velocity.x, m_jumpForce);
-            m_groundSensor.Disable(0.2f);
+            if (m_grounded)
+            {
+                m_animator.SetTrigger("Jump");
+                m_grounded = false;
+                m_animator.SetBool("Grounded", m_grounded);
+                m_body2d.velocity = new Vector2(m_body2d.velocity.x, m_jumpForce);
+                m_groundSensor.Disable(0.2f);
+            }
+            else if (m_doubleJump)
+            {
+                m_animator.SetTrigger("DoubleJump");
+                m_body2d.velocity = new Vector2(m_body2d.velocity.x, m_jumpForce);
+                m_doubleJump = false;
+            }
+
         }
 
         //Run
@@ -170,6 +181,14 @@ public class HeroKnight : MonoBehaviour {
             m_delayToIdle -= Time.deltaTime;
                 if(m_delayToIdle < 0)
                     m_animator.SetInteger("AnimState", 0);
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (m_grounded && !m_doubleJump)
+        {
+            m_doubleJump = true;
         }
     }
 
