@@ -7,20 +7,37 @@ using UnityEngine.UIElements;
 
 public class ArrowManager : MonoBehaviour
 {
+    public static float GLITCH_SPEED = 2.0f;
+
     [SerializeField] GameObject arrowPrefab;
     [SerializeField] GameObject rockPrefab;
-    [SerializeField] float coolDown;
+    [SerializeField] GameObject swordPrefab;
+    [SerializeField] GameObject toGlitch;
     [SerializeField] GameObject wall;
     [SerializeField] GameObject spawn;
+    [SerializeField] float coolDown;
     [SerializeField] float speed = 0.1f;
     [SerializeField] int level = 1;
 
     private float timer = 0;
     private List<GameObject> arrows = new List<GameObject>();
     private List<GameObject> rocks = new List<GameObject>();
+    private GameObject sword = null;
 
     void FixedUpdate() {
         if (timer % coolDown == 0) {
+            // Special glitched sword
+            if (Random.value < 0.25 && sword == null)
+            {
+                var swordPos = swordPrefab.transform.position;
+                swordPos.x = -10f;
+                sword = Instantiate(swordPrefab, swordPos, Quaternion.identity);
+                sword.tag = "GlitchedSword";
+                var swordCollider = sword.AddComponent<BoxCollider2D>();
+                swordCollider.isTrigger = false;
+                swordCollider.size = new Vector2(1f, 0.2f);
+            }
+
             var arrowToSpawnCount = Random.value * level;
             var rockToSpawnCount = Random.value * (level / 2);
 
@@ -95,5 +112,16 @@ public class ArrowManager : MonoBehaviour
                 Destroy(r);
             }
         };
+
+        if (sword != null)
+        {
+            sword.transform.Translate(GLITCH_SPEED * Time.deltaTime, 0, 0);
+
+            if (sword.transform.position.x >= wall.transform.position.x)
+            {
+                Destroy(sword);
+                sword = null;
+            }
+        }
     }
 }

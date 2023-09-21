@@ -23,6 +23,7 @@ public class HeroKnight : MonoBehaviour {
     private bool                m_rolling = false;
     private bool                m_doubleJump = true;
     private bool                m_isAlive = true;
+    private bool                m_glitching = false;
     private int                 m_facingDirection = 1;
     private int                 m_currentAttack = 0;
     private float               m_timeSinceAttack = 0.0f;
@@ -194,6 +195,15 @@ public class HeroKnight : MonoBehaviour {
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (m_glitching)
+        {
+            Debug.Log("GLITCHING");
+            m_body2d.velocity = new Vector2(m_body2d.velocity.x + ArrowManager.GLITCH_SPEED, m_body2d.velocity.y);
+        }
+    }
+
     // Animation Events
     // Called in slide animation.
     void AE_SlideDust()
@@ -229,6 +239,22 @@ public class HeroKnight : MonoBehaviour {
                 m_isAlive = false;
                 m_animator.SetTrigger("Death");
             }
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("GlitchedSword"))
+        {
+            m_glitching = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("GlitchedSword"))
+        {
+            m_glitching = false;
         }
     }
 }
