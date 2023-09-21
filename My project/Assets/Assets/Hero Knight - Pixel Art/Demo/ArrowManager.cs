@@ -15,6 +15,7 @@ public class ArrowManager : MonoBehaviour
     [SerializeField] GameObject toGlitch;
     [SerializeField] GameObject wall;
     [SerializeField] GameObject spawn;
+    [SerializeField] GameObject audio;
     [SerializeField] float      coolDown;
     [SerializeField] float      timeToIncrement = 15000;
     [SerializeField] float      speed = 0.1f;
@@ -104,6 +105,7 @@ public class ArrowManager : MonoBehaviour
         {
             level += 1;
             speed += 1;
+            audio.GetComponent<AudioSource>().pitch += 0.1f;
         }
     }
 
