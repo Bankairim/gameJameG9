@@ -33,7 +33,7 @@ public class ArrowManager : MonoBehaviour
 
         if (timer % coolDown == 0) {
             // Special glitched sword
-            if (level >= 4 && Random.value < 0.25 && sword == null)
+            if (level >= 3 && Random.value < 0.25 && sword == null)
             {
                 var swordPos = swordPrefab.transform.position;
                 swordPos.x = -10f;
@@ -54,7 +54,7 @@ public class ArrowManager : MonoBehaviour
             var arrowToSpawnCount = Random.value * level;
             var rockToSpawnCount = Random.value * (level / 2);
 
-            for (int i = 0; i < arrowToSpawnCount; i++)
+            for (int i = 0; i < arrowToSpawnCount / 2; i++)
             {
                 var randomPos = spawn.transform.position;
                 randomPos.y = Random.Range(-2.25f, 2.25f);
@@ -74,7 +74,7 @@ public class ArrowManager : MonoBehaviour
                 arrows.Add(newArrow);
             }
 
-            for (int i = 0; i < rockToSpawnCount; i++)
+            for (int i = 0; i < rockToSpawnCount / 2; i++)
             {
                 var randomPos = spawn.transform.position;
                 randomPos.y = 2.25f;
@@ -136,7 +136,7 @@ public class ArrowManager : MonoBehaviour
         {
             sword.transform.Translate(GLITCH_SPEED * Time.deltaTime, 0, 0);
 
-            if (sword.transform.position.x >= wall.transform.position.x)
+            if (sword.transform.position.x >= wall.transform.position.x + 5)
             {
                 Destroy(sword);
                 sword = null;
