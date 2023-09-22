@@ -14,6 +14,8 @@ public class HeroKnight : MonoBehaviour {
     [SerializeField] GameObject m_healthbar;
     [SerializeField] BoxCollider2D m_wallCollider;
 
+    public GameManager gameManager;
+
     private Animator            m_animator;
     private Rigidbody2D         m_body2d;
     private CapsuleCollider2D   m_swordCollider = null;
@@ -333,6 +335,8 @@ public class HeroKnight : MonoBehaviour {
         {
             m_isAlive = false;
             m_animator.SetTrigger("Death");
+
+            gameManager.SetState(e_GameState.GAMEOVER);
         }
     }
 }

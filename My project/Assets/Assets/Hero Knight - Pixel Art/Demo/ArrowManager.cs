@@ -27,6 +27,8 @@ public class ArrowManager : MonoBehaviour
     private GameObject          sword = null;
 
     void FixedUpdate() {
+        if (GameManager.Instance.GetState()) return;
+
         if (sword != null && sword.IsDestroyed() == true)
         {
             sword = null;
