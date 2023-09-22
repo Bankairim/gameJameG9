@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
     public GameObject gameOver;
     public GameObject victory;
     public GameObject menu;
+    public GameObject hardcore;
+    private bool harcoreMode = false;
 
     #endregion
 
@@ -81,7 +83,12 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
-        if (Input.anyKey && m_State == e_GameState.MENU)
+        if (Input.GetKeyDown(KeyCode.H) && m_State == e_GameState.MENU)
+        {
+            ArrowManager.Instance.ToggleHardcoreMode();
+            hardcore.SetActive(!harcoreMode);
+        }
+        if (Input.anyKey && Input.GetKeyDown(KeyCode.H) && m_State == e_GameState.MENU)
         {
             m_State = e_GameState.PLAY;
         } 

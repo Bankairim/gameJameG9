@@ -26,6 +26,14 @@ public class ArrowManager : MonoBehaviour
     private List<GameObject>    arrows = new List<GameObject>();
     private List<GameObject>    rocks = new List<GameObject>();
     private GameObject          sword = null;
+    private bool                m_hardcore = false;
+
+    public static ArrowManager Instance { get; private set; }
+
+    private void Start()
+    {
+        Instance = this;
+    }
 
     void FixedUpdate() {
         if (GameManager.Instance.GetState() != e_GameState.PLAY) return;
@@ -36,7 +44,7 @@ public class ArrowManager : MonoBehaviour
         }
 
         if (timer % coolDown == 0) {
-            var arrowsPos = new Vector2(Random.Range(-15f, -8f), Random.Range(0f, 1.5f));
+            var arrowsPos = new Vector2(Random.Range(-15f, -8f), Random.Range(-1.75f, 1f));
             // Special glitched sword
             if (level >= 3 && Random.value < 0.25 && sword == null)
             {
@@ -59,7 +67,7 @@ public class ArrowManager : MonoBehaviour
             var arrowToSpawnCount = Random.value * level;
             var rockToSpawnCount = Random.value * (level / 2);
 
-            for (int i = 0; i < arrowToSpawnCount / 2; i++)
+            for (int i = 0; i < arrowToSpawnCount*2; i++)
             {
                 var randomPos = spawn.transform.position;
                 randomPos.y = arrowsPos.y + Random.Range(-0.5f, 0.5f);
@@ -79,7 +87,7 @@ public class ArrowManager : MonoBehaviour
                 arrows.Add(newArrow);
             }
 
-            for (int i = 0; i < rockToSpawnCount / 2; i++)
+            for (int i = 0; i < rockToSpawnCount; i++)
             {
                 var randomPos = spawn.transform.position;
                 randomPos.y = 2.25f;
@@ -154,6 +162,24 @@ public class ArrowManager : MonoBehaviour
                 Destroy(sword);
                 sword = null;
             }
+        }
+    }
+
+    public void ToggleHardcoreMode()
+    {
+        if (!m_hardcore)
+        {
+            m_hardcore = true;
+            level = 8;
+            speed = 6;
+            coolDown = 750;
+        }
+        else
+        {
+            m_hardcore = false;
+            level = 1;
+            speed = 2;
+            coolDown = 1500;
         }
     }
 }

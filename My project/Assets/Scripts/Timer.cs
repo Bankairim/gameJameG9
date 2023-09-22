@@ -36,6 +36,7 @@ public class Timer : MonoBehaviour
         }
         if (currentTime <= 0)
         {
+            timerText.text = "00:00";
             GameManager.Instance.SetState(e_GameState.VICTORY);
         }
     }
