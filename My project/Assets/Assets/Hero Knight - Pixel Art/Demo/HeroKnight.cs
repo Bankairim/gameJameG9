@@ -14,8 +14,6 @@ public class HeroKnight : MonoBehaviour {
     [SerializeField] GameObject m_healthbar;
     [SerializeField] BoxCollider2D m_wallCollider;
 
-    public GameManager gameManager;
-
     private Animator            m_animator;
     private Rigidbody2D         m_body2d;
     private CapsuleCollider2D   m_swordCollider = null;
@@ -123,6 +121,7 @@ public class HeroKnight : MonoBehaviour {
         //Attack
         if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f && !m_rolling)
         {
+            SFXManager.Instance.PlayAudio("Slash");
             if (m_swordCollider != null)
             {
                 Destroy(m_swordCollider);
@@ -161,6 +160,11 @@ public class HeroKnight : MonoBehaviour {
             m_timeSinceBlock = 0.0001f;
             m_animator.SetTrigger("Block");
             m_body2d.velocity = new Vector2(0f, m_body2d.velocity.y);
+            SFXManager.Instance.PlayAudio("Shield");
+        }
+        else if (m_timeSinceBlock >= m_blockTime && m_timeSinceBlock < m_blockCooldown)
+        {
+            m_blocking = false;
         }
 
         // Roll
@@ -208,10 +212,6 @@ public class HeroKnight : MonoBehaviour {
                     m_animator.SetInteger("AnimState", 0);
         }
 
-        if (Input.GetMouseButtonUp(1))
-        {
-            m_blocking = false;
-        }
         if (m_timeSinceAttack >= 0.5f)
         {
             m_attacking = false;
@@ -297,6 +297,7 @@ public class HeroKnight : MonoBehaviour {
                     transform.position.y + 0.8f,
                     transform.position.z
                 );
+                SFXManager.Instance.PlayAudio("Arrow", 0.025f);
                 VFXManager.Instance.Create("Blocked", vfxPos);
                 Destroy(collision.gameObject);
                 return;
@@ -330,13 +331,13 @@ public class HeroKnight : MonoBehaviour {
         m_health -= damage;
         m_healthbar.GetComponent<Slider>().value = m_health;
         m_animator.SetTrigger("Hurt");
+        SFXManager.Instance.PlayAudio("Hurt");
 
         if (m_health <= 0)
         {
             m_isAlive = false;
             m_animator.SetTrigger("Death");
-
-            gameManager.SetState(e_GameState.GAMEOVER);
+            SFXManager.Instance.PlayAudio("Die");
         }
     }
 }
