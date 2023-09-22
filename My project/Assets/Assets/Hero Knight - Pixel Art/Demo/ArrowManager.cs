@@ -12,6 +12,7 @@ public class ArrowManager : MonoBehaviour
     [SerializeField] GameObject arrowPrefab;
     [SerializeField] GameObject rockPrefab;
     [SerializeField] GameObject swordPrefab;
+    [SerializeField] GameObject ennemyPrefab;
     [SerializeField] GameObject toGlitch;
     [SerializeField] GameObject wall;
     [SerializeField] GameObject spawn;
@@ -33,7 +34,7 @@ public class ArrowManager : MonoBehaviour
         }
 
         if (timer % coolDown == 0) {
-            var arrowsPos = new Vector2(Random.Range(-15f, -5f), Random.Range(-2.25f, 2.25f));
+            var arrowsPos = new Vector2(Random.Range(-15f, -8f), Random.Range(0f, 1.5f));
             // Special glitched sword
             if (level >= 3 && Random.value < 0.25 && sword == null)
             {
@@ -70,7 +71,7 @@ public class ArrowManager : MonoBehaviour
 
                 var collider = newArrow.AddComponent<BoxCollider2D>();
                 collider.offset = new Vector2(0f, 0f);
-                collider.size = new Vector2(1f, 0.15f);
+                collider.size = new Vector2(1f * scale.x, 0.15f);
                 collider.isTrigger = true;
 
                 arrows.Add(newArrow);
@@ -103,9 +104,14 @@ public class ArrowManager : MonoBehaviour
 
         if (timer != 0 && timer % timeToIncrement == 0)
         {
-            level += 1;
-            speed += 1;
-            musicAudio.GetComponent<AudioSource>().pitch += 0.1f;
+            level += 2;
+            speed += 2;
+            musicAudio.GetComponent<AudioSource>().pitch += 0.05f;
+
+            if (level % 4 == 0)
+            {
+                Instantiate(ennemyPrefab, new Vector3(-8.69f, -1.7f, 0.61f), Quaternion.identity);
+            }
         }
     }
 

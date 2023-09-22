@@ -6,7 +6,7 @@ public class Bandit : MonoBehaviour
     Transform player;
     private Animator m_animator;
     private Rigidbody2D m_body2d;
-    private int m_lives = 3;
+    private int m_lives = 8;
     private float m_timeSinceDeath = 0.0f;
     private float m_timeToDisappear = 2.0f;
     private float m_timeSinceAttack = -1f;
