@@ -160,6 +160,10 @@ public class HeroKnight : MonoBehaviour {
             m_animator.SetTrigger("Block");
             m_body2d.velocity = new Vector2(0f, m_body2d.velocity.y);
         }
+        else if (m_timeSinceBlock >= m_blockTime && m_timeSinceBlock < m_blockCooldown)
+        {
+            m_blocking = false;
+        }
 
         // Roll
         else if (Input.GetKeyDown("left shift") && !m_rolling && !m_isWallSliding)
@@ -206,10 +210,6 @@ public class HeroKnight : MonoBehaviour {
                     m_animator.SetInteger("AnimState", 0);
         }
 
-        if (Input.GetMouseButtonUp(1))
-        {
-            m_blocking = false;
-        }
         if (m_timeSinceAttack >= 0.5f)
         {
             m_attacking = false;

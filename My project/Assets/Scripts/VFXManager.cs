@@ -13,26 +13,14 @@ public class VFXManager : MonoBehaviour
         public GameObject Value;
     }
 
-    public float Timer = 0f;
     public VFX[] Animations;
-    public Dictionary<double, GameObject> ExistingVFX = new Dictionary<double, GameObject>();
+    public List<GameObject> AnimationsList = new List<GameObject>();
 
     public static VFXManager Instance;
 
     private void Start()
     {
         Instance = this;
-    }
-
-    private void Update()
-    {
-        var toDelete = ExistingVFX.Where(v => v.Key >= Timer).ToList();
-        ExistingVFX = ExistingVFX.Where(v => v.Key < Timer) as Dictionary<double, GameObject>;
-
-        foreach(var v in toDelete)
-        {
-            Destroy(v.Value);
-        }
     }
 
     public void Create(string Id, Vector3 position)
@@ -51,6 +39,23 @@ public class VFXManager : MonoBehaviour
             return;
         }
 
-        ExistingVFX.Add(Time.deltaTime + 1f, Instantiate(go, position, Quaternion.identity));
+        AnimationsList.Add(go);
+    }
+
+    private void Update()
+    {
+        foreach(GameObject g in AnimationsList)
+        {
+            var animator = g.GetComponent<Animator>();
+
+            if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Blocked") &&
+                animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
+            {
+                g.SetActive(false);
+                Destroy(g);
+            }
+        }
+
+
     }
 }
