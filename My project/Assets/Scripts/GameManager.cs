@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour
             ArrowManager.Instance.ToggleHardcoreMode();
             hardcore.SetActive(!harcoreMode);
         }
-        if (Input.anyKey && Input.GetKeyDown(KeyCode.H) && m_State == e_GameState.MENU)
+        if (Input.anyKey && !Input.GetKeyDown(KeyCode.H) && m_State == e_GameState.MENU)
         {
             m_State = e_GameState.PLAY;
         } 
