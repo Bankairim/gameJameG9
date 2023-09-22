@@ -62,6 +62,8 @@ public class HeroKnight : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
+        if (GameManager.Instance.GetState() != e_GameState.PLAY) return;
+
         if (!m_isAlive) return;
 
         // Increase timer that controls attack combo
@@ -240,6 +242,13 @@ public class HeroKnight : MonoBehaviour {
 
     private void LateUpdate()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            GameManager.Instance.Jouer();
+        }
+
+        if (GameManager.Instance.GetState() != e_GameState.PLAY) return;
+
         if (m_grounded && !m_doubleJump)
         {
             m_doubleJump = true;
@@ -259,6 +268,8 @@ public class HeroKnight : MonoBehaviour {
 
     private void FixedUpdate()
     {
+        if (GameManager.Instance.GetState() != e_GameState.PLAY) return;
+
         if (m_glitching)
         {
             Debug.Log("GLITCHING");
@@ -338,6 +349,7 @@ public class HeroKnight : MonoBehaviour {
             m_isAlive = false;
             m_animator.SetTrigger("Death");
             SFXManager.Instance.PlayAudio("Die");
+            GameManager.Instance.SetState(e_GameState.GAMEOVER);
         }
     }
 }

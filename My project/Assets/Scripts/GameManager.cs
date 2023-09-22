@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 
 public enum e_GameState
 {
@@ -20,64 +21,55 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Game Manager Variables
-    public GameObject mainCamera;
     public e_GameState m_State;
     public GameObject pause;
     public GameObject gameOver;
     public GameObject victory;
-    public GameObject restart;
-    public GameObject play;
-    public GameObject HeroKnight;
+    public GameObject menu;
 
     #endregion
-
-
-    void Awake() {
-        if (!Instance)
-        {
-            Instance = this;
-            DontDestroyOnLoad(this);
-        }
-        else
-        {
-            Destroy(this);
-        }
-    }
 
     // Start is called before the first frame update
     void Start()
     {
-        pause = GameObject.FindGameObjectWithTag("Pause");
-        restart = GameObject.FindGameObjectWithTag("Restart");
-        gameOver = GameObject.FindGameObjectWithTag("GameOver");
-        victory = GameObject.FindGameObjectWithTag("Victory");
-        play = GameObject.FindGameObjectWithTag("Play");
+        Instance = this;
+        m_State = e_GameState.MENU;
     }
 
     private void Update()
     {
+        if ((m_State == e_GameState.VICTORY || m_State == e_GameState.GAMEOVER) && Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            string currentSceneName = SceneManager.GetActiveScene().name;
+            SceneManager.LoadScene(currentSceneName);
+        }
+
         switch (m_State)
         {
             case e_GameState.MENU:
-                break;
-            case e_GameState.PLAY:
-                play.SetActive(true);
                 pause.SetActive(false);
                 victory.SetActive(false);
                 gameOver.SetActive(false);
+                menu.SetActive(true);
+                break;
+            case e_GameState.PLAY:
+                pause.SetActive(false);
+                victory.SetActive(false);
+                gameOver.SetActive(false);
+                menu.SetActive(false);
                 SetState(e_GameState.PLAY);
                 break;
             case e_GameState.PAUSE:
                 pause.SetActive(true);
-                pause.SetActive(false);
-                play.SetActive(false);
+                victory.SetActive(false);
+                menu.SetActive(false);
                 gameOver.SetActive(false);
                 SetState(e_GameState.PAUSE);
                 break;
             case e_GameState.VICTORY:
                 pause.SetActive(false);
-                play.SetActive(false);
                 gameOver.SetActive(false);
+                menu.SetActive(false);
                 victory.SetActive(true);
                 SetState(e_GameState.VICTORY);
                 break;
@@ -85,12 +77,17 @@ public class GameManager : MonoBehaviour
                 gameOver.SetActive(true);
                 pause.SetActive(false);
                 victory.SetActive(false);
-                play.SetActive(false);
+                menu.SetActive(false);
                 SetState(e_GameState.GAMEOVER);
                 break;
             default:
                 break;
         }
+
+        if (Input.anyKey && m_State == e_GameState.MENU)
+        {
+            m_State = e_GameState.PLAY;
+        } 
     }
 
     public void SetState(e_GameState newState)
@@ -100,5 +97,18 @@ public class GameManager : MonoBehaviour
 
     public e_GameState GetState(){
         return m_State;
+    }
+
+    public void Jouer()
+    {
+        if (m_State != e_GameState.PLAY)
+        {
+            m_State = e_GameState.PLAY;
+        }
+
+        else if (m_State == e_GameState.PLAY)
+        {
+            m_State = e_GameState.PAUSE;
+        }
     }
 }

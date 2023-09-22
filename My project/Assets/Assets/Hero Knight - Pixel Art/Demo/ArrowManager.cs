@@ -28,7 +28,7 @@ public class ArrowManager : MonoBehaviour
     private GameObject          sword = null;
 
     void FixedUpdate() {
-        if (GameManager.Instance.GetState()) return;
+        if (GameManager.Instance.GetState() != e_GameState.PLAY) return;
 
         if (sword != null && sword.IsDestroyed() == true)
         {
@@ -119,6 +119,8 @@ public class ArrowManager : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (GameManager.Instance.GetState() != e_GameState.PLAY) return;
+
         arrows = arrows.Where(a => !a.IsDestroyed()).ToList();
         rocks = rocks.Where(r => !r.IsDestroyed()).ToList();
 

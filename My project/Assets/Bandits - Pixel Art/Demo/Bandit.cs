@@ -28,6 +28,8 @@ public class Bandit : MonoBehaviour
     // Update is called once per frame
     void Update ()
     {
+        if (GameManager.Instance.GetState() != e_GameState.PLAY) return;
+
         if (m_dead)
         {
             m_timeSinceDeath += Time.deltaTime;
